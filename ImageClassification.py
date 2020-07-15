@@ -4,15 +4,17 @@ from tensorflow.keras.datasets import cifar10
 
 import numpy as np
 
-import matplotlib.pyplot as plt
+import ml_utility
 
 # Loading data and preprocessing by setting values between 0 and 1
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train = x_train / 255
 x_test = x_test / 255
 
-EPOCHS = 1
 
+# Build model using convlutional 2D layers
+# You can experiement building different model structures with different pooling layers,
+# strides, filter size, num of filters
 def conv2d_model():
     model = Sequential()
     model.add(Conv2D(32, 3, input_shape=x_train.shape[1:], activation="relu"))
@@ -33,15 +35,15 @@ def conv2d_model():
 
     return model
 
+
+# Tune-able hyper parameters
+EPOCHS = 1
+BATCH_SIZE = 32
+
 model = conv2d_model()
 history = model.fit(x_train, y_train,
-                    batch_size=32,
+                    batch_size=BATCH_SIZE,
                     epochs=EPOCHS,
                     validation_split=0.2)
 
-
-plt.figure(1)
-plot_acc(history.history["acc"], history.history["val_acc"], epochs)
-plt.figure(2)
-plot_loss(history.history["loss"], history.history["val_loss"], epochs)
-plt.show()
+ml_utility.plot_history(history, EPOCHS, ["acc", "loss"])
